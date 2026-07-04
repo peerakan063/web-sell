@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel | หนุ่มกล้ามทอง</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#ffd700; --gold2:#ffaa00; --dark:#080810; --dark2:#0f0f1a;
+  --dark3:#161628; --dark4:#1e1e35; --text:#e8e8f0; --muted:#7070a0;
+  --green:#22c55e; --red:#ef4444; --orange:#f97316; --blue:#3b82f6;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Kanit',sans-serif; background:var(--dark); color:var(--text); min-height:100vh; display:flex; }
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--dark2); }
+::-webkit-scrollbar-thumb { background:var(--gold2); border-radius:3px; }
+.sidebar { width:240px; min-height:100vh; background:var(--dark2); border-right:1px solid rgba(255,215,0,0.1); display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:50; }
+.sidebar-logo { padding:24px 20px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:10px; }
+.logo-icon { width:36px; height:36px; background:var(--gold); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; color:#000; }
+.logo-text { font-size:16px; font-weight:900; color:var(--gold); }
+.logo-text span { color:white; }
+.sidebar-label { padding:16px 20px 8px; font-size:10px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; }
+.sidebar-menu { flex:1; padding:0 12px; overflow-y:auto; }
+.menu-item { display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:10px; cursor:pointer; color:var(--muted); font-size:14px; font-weight:600; transition:all 0.2s; margin-bottom:4px; }
+.menu-item:hover { background:rgba(255,255,255,0.04); color:var(--text); }
+.menu-item.active { background:rgba(255,215,0,0.1); color:var(--gold); }
+.menu-icon { font-size:18px; width:24px; text-align:center; }
+.sidebar-bottom { padding:16px; border-top:1px solid rgba(255,255,255,0.05); }
+.btn-logout { width:100%; padding:10px; border-radius:8px; border:none; background:rgba(239,68,68,0.1); color:var(--red); font-family:'Kanit',sans-serif; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; transition:all 0.2s; }
+.btn-logout:hover { background:rgba(239,68,68,0.2); }
+.main { margin-left:240px; flex:1; min-height:100vh; }
+.topbar { background:rgba(8,8,16,0.9); backdrop-filter:blur(12px); border-bottom:1px solid rgba(255,215,0,0.1); padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:40; }
+.page-title { font-size:18px; font-weight:900; color:white; }
+.topbar-right { display:flex; align-items:center; gap:12px; }
+.admin-badge { padding:5px 12px; border-radius:20px; background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.3); color:var(--gold); font-size:12px; font-weight:700; }
+.content { padding:28px; }
+.stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-card { background:var(--dark3); border-radius:14px; border:1px solid rgba(255,255,255,0.06); padding:20px; display:flex; align-items:center; gap:16px; }
+.stat-ico { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; }
+.stat-ico.gold{background:rgba(255,215,0,0.1);} .stat-ico.green{background:rgba(34,197,94,0.1);} .stat-ico.red{background:rgba(239,68,68,0.1);}
+.stat-val{font-size:28px;font-weight:900;} .stat-val.gold{color:var(--gold);} .stat-val.green{color:var(--green);} .stat-val.red{color:var(--red);}
+.stat-lbl{font-size:12px;color:var(--muted);margin-top:2px;}
+.panel{display:none;} .panel.active{display:block;}
+.card{background:var(--dark3);border-radius:14px;border:1px solid rgba(255,255,255,0.06);padding:24px;margin-bottom:20px;}
+.card-title{font-size:16px;font-weight:900;color:white;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:6px;} .field.full{grid-column:1/-1;}
+.field label{font-size:13px;font-weight:600;color:var(--muted);}
+input[type=text],input[type=number],textarea,select{padding:11px 14px;background:var(--dark4);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:var(--text);font-family:'Kanit',sans-serif;font-size:14px;outline:none;transition:all 0.2s;}
+input:focus,textarea:focus,select:focus{border-color:rgba(255,215,0,0.4);}
+input::placeholder,textarea::placeholder{color:var(--muted);}
+textarea{resize:vertical;min-height:80px;}
+.upload-zone{border:2px dashed rgba(255,215,0,0.25);border-radius:14px;padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.25s;background:var(--dark4);position:relative;}
+.upload-zone:hover,.upload-zone.dragover{border-color:rgba(255,215,0,0.6);background:rgba(255,215,0,0.04);}
+.upload-zone-icon{font-size:36px;margin-bottom:10px;} .upload-zone-text{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;} .upload-zone-sub{font-size:12px;color:var(--muted);}
+.upload-zone-badge{display:inline-block;margin-top:10px;padding:4px 14px;border-radius:20px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.3);color:var(--gold);font-size:11px;font-weight:700;}
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin-top:14px;}
+.preview-item{position:relative;border-radius:10px;overflow:hidden;border:2px solid rgba(255,255,255,0.08);aspect-ratio:1;background:var(--dark4);}
+.preview-item:hover{border-color:rgba(255,215,0,0.4);}
+.preview-item img{width:100%;height:100%;object-fit:cover;display:block;}
+.preview-item .remove-btn{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;background:rgba(239,68,68,0.9);border:none;color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;}
+.preview-item:hover .remove-btn{opacity:1;}
+.preview-item .thumb-label{position:absolute;bottom:0;left:0;right:0;padding:4px;background:rgba(255,215,0,0.9);color:#000;font-size:9px;font-weight:900;text-align:center;}
+.preview-count{font-size:12px;color:var(--muted);margin-top:8px;} .preview-count strong{color:var(--gold);}
+.upload-progress{margin-top:12px;display:none;} .upload-progress.show{display:block;}
+.progress-bar-wrap{background:var(--dark4);border-radius:6px;height:6px;overflow:hidden;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:6px;transition:width 0.3s;width:0%;}
+.progress-label{font-size:12px;color:var(--muted);margin-top:6px;}
+.btn-primary{padding:12px 24px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--orange),#ea6500);color:white;font-family:'Kanit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(249,115,22,0.4);}
+.btn-primary:disabled{background:var(--dark4);color:var(--muted);transform:none;box-shadow:none;cursor:not-allowed;}
+.btn-danger{padding:7px 14px;border-radius:8px;border:none;background:rgba(239,68,68,0.15);color:var(--red);font-family:'Kanit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-danger:hover{background:rgba(239,68,68,0.3);}
+.btn-success{padding:7px 14px;border-radius:8px;border:none;background:rgba(34,197,94,0.15);color:var(--green);font-family:'Kanit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-success:hover{background:rgba(34,197,94,0.3);}
+.btn-outline{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--muted);font-family:'Kanit',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-outline:hover{color:var(--text);border-color:rgba(255,255,255,0.2);}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;}
+th{padding:12px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,0.06);}
+td{padding:14px 16px;font-size:13px;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+tr:hover td{background:rgba(255,255,255,0.02);}
+.td-img-wrap{display:flex;gap:4px;align-items:center;}
+.td-img{width:48px;height:36px;object-fit:cover;border-radius:6px;background:var(--dark4);flex-shrink:0;}
+.td-img-more{width:28px;height:36px;border-radius:6px;background:var(--dark4);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:var(--muted);font-weight:700;}
+.td-img-placeholder{width:48px;height:36px;border-radius:6px;background:var(--dark4);display:inline-flex;align-items:center;justify-content:center;font-size:20px;}
+.badge{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;}
+.badge.available{background:rgba(34,197,94,0.15);color:var(--green);}
+.badge.sold{background:rgba(239,68,68,0.15);color:var(--red);}
+.badge.pending{background:rgba(249,115,22,0.15);color:var(--orange);}
+.badge.paid{background:rgba(59,130,246,0.15);color:var(--blue);}
+.badge.confirmed{background:rgba(34,197,94,0.15);color:var(--green);}
+.badge.rejected{background:rgba(239,68,68,0.15);color:var(--red);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--dark3);border-radius:16px;padding:24px;border:1px solid rgba(255,215,0,0.2);max-width:460px;width:90%;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:16px;font-weight:900;color:white;margin-bottom:16px;}
+.modal img{width:100%;border-radius:10px;}
+.modal-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
+.empty{text-align:center;padding:40px;color:var(--muted);}
+.empty .icon{font-size:40px;margin-bottom:12px;}
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;padding:14px 20px;border-radius:10px;font-size:14px;font-weight:600;display:none;align-items:center;gap:10px;max-width:320px;}
+.toast.show{display:flex;}
+.toast.success{background:#166534;border:1px solid #22c55e;color:#86efac;}
+.toast.error{background:#7f1d1d;border:1px solid #ef4444;color:#fca5a5;}
+.spinner{width:28px;height:28px;border-radius:50%;border:3px solid var(--dark4);border-top-color:var(--gold);animation:spin 0.8s linear infinite;margin:20px auto;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.session-toast{display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;background:#7f1d1d;border:1px solid var(--red);color:#fca5a5;font-size:14px;font-weight:700;padding:14px 28px;border-radius:12px;}
+.session-toast.show{display:block;}
+</style>
+</head>
+<body>
+
+<div class="session-toast" id="sessionToast">⚠️ Session หมดอายุ กำลังพาไปหน้าล็อกอิน...</div>
+
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎮</div>
+    <div class="logo-text">หนุ่ม<span>กล้ามทอง</span></div>
+  </div>
+  <div class="sidebar-label">เมนูหลัก</div>
+  <div class="sidebar-menu">
+    <div class="menu-item active" onclick="showPanel('dashboard',this)"><span class="menu-icon">📊</span> Dashboard</div>
+    <div class="menu-item" onclick="showPanel('products',this)"><span class="menu-icon">🎮</span> จัดการสินค้า</div>
+    <div class="menu-item" onclick="showPanel('orders',this)"><span class="menu-icon">📋</span> ออเดอร์</div>
+    <div class="menu-item" onclick="showPanel('add',this)"><span class="menu-icon">➕</span> เพิ่มสินค้า</div>
+  </div>
+  <div class="sidebar-bottom">
+    <a href="index.html" style="display:flex;margin-bottom:10px;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);color:var(--text);text-decoration:none;font-size:13px;font-weight:600;align-items:center;justify-content:center;gap:6px">🌐 ดูหน้าเว็บ</a>
+    <button class="btn-logout" onclick="logout()">🚪 ออกจากระบบ</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">📊 Dashboard</div>
+    <div class="topbar-right">
+      <div class="admin-badge">👑 Admin</div>
+      <span id="adminName" style="font-size:14px;font-weight:600;color:var(--muted)"></span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="panel active" id="panel-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-ico gold">🎮</div><div><div class="stat-val gold" id="s-total">-</div><div class="stat-lbl">สินค้าทั้งหมด</div></div></div>
+        <div class="stat-card"><div class="stat-ico green">✅</div><div><div class="stat-val green" id="s-avail">-</div><div class="stat-lbl">พร้อมขาย</div></div></div>
+        <div class="stat-card"><div class="stat-ico red">💰</div><div><div class="stat-val red" id="s-sold">-</div><div class="stat-lbl">ขายแล้ว</div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">📋 ออเดอร์รอยืนยัน</div>
+        <div id="recentOrders"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="panel" id="panel-products">
+      <div class="card">
+        <div class="card-title">🎮 สินค้าทั้งหมด</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>รูป</th><th>รายละเอียด</th><th>ราคา</th><th>สถานะ</th><th>วันที่</th><th>จัดการ</th></tr></thead>
+            <tbody id="productTable"><tr><td colspan="6"><div class="spinner"></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="panel" id="panel-orders">
+      <div class="card">
+        <div class="card-title">📋 ออเดอร์</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ผู้ซื้อ</th><th>สินค้า</th><th>ราคา</th><th>สถานะ</th><th>สลิป</th><th>วันที่</th><th>จัดการ</th></tr></thead>
+            <tbody id="orderTable"><tr><td colspan="7"><div class="spinner"></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD PRODUCT -->
+    <div class="panel" id="panel-add">
+      <div class="card">
+        <div class="card-title">➕ เพิ่มสินค้าใหม่</div>
+        <div class="form-grid">
+          <div class="field full"><label>รายละเอียดสินค้า *</label><textarea id="addDetail" placeholder="เช่น ไอดี Free Fire สกิน Alok..."></textarea></div>
+          <div class="field"><label>ราคา (บาท) *</label><input type="number" id="addPrice" placeholder="เช่น 500"></div>
+          <div class="field"><label>ประเภทเกม</label>
+            <select id="addGame"><option value="freefire">Free Fire</option><option value="rov">ROV</option><option value="pubg">PUBG</option><option value="other">อื่นๆ</option></select>
+          </div>
+          <div class="field full">
+            <label>🔐 ข้อมูลลับสำหรับส่งให้ลูกค้า <span style="color:var(--muted);font-weight:400">(แสดงหลังยืนยันเท่านั้น)</span></label>
+            <textarea id="addSecret" placeholder="เช่น อีเมล: xxx@gmail.com / รหัสผ่าน: 123456" style="border-color:rgba(255,215,0,0.2);min-height:100px"></textarea>
+          </div>
+          <div class="field full">
+            <label>📷 รูปภาพสินค้า <span style="color:var(--muted);font-weight:400">(สูงสุด 8 รูป)</span></label>
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('addImages').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+              <div class="upload-zone-icon">🖼️</div>
+              <div class="upload-zone-text">คลิกหรือลากรูปมาวางที่นี่</div>
+              <div class="upload-zone-sub">รองรับ JPG, PNG, WEBP</div>
+              <div class="upload-zone-badge">⚡ อัพได้สูงสุด 8 รูป</div>
+            </div>
+            <input type="file" id="addImages" accept="image/*" multiple style="display:none" onchange="handleImageSelect(this.files)">
+            <div id="previewGrid" class="preview-grid" style="display:none"></div>
+            <div class="preview-count" id="previewCount" style="display:none"></div>
+            <div class="upload-progress" id="uploadProgress">
+              <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar"></div></div>
+              <div class="progress-label" id="progressLabel">กำลังอัพโหลด...</div>
+            </div>
+          </div>
+          <div class="field full"><button class="btn-primary" id="addBtn" onclick="addProduct()">➕ เพิ่มสินค้า</button></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SLIP MODAL -->
+<div class="modal-overlay" id="slipModal">
+  <div class="modal">
+    <div class="modal-title">🧾 สลิปการโอนเงิน</div>
+    <img id="modalSlipImg" src="" alt="slip">
+    <div class="modal-actions">
+      <button class="btn-success" onclick="confirmOrder()">✅ ยืนยัน</button>
+      <button class="btn-danger"  onclick="rejectOrder()">❌ ปฏิเสธ</button>
+      <button class="btn-outline" onclick="closeModal()">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = "http://localhost:3000";
+let currentOrderId = null;
+let selectedFiles  = [];
+let sessionExpired = false;
+
+if (!localStorage.getItem("token")) location.href = "auth.html";
+
+async function authFetch(url, options = {}) {
+  const token = localStorage.getItem("token");
+  const res   = await fetch(url, { ...options, headers: { Authorization: token, ...(options.headers||{}) } });
+  if (res.status === 401) { handleSessionExpired(); throw new Error("Unauthorized"); }
+  return res;
+}
+function handleSessionExpired() {
+  if (sessionExpired) return; sessionExpired = true;
+  document.getElementById("sessionToast").classList.add("show");
+  setTimeout(() => logout(), 2500);
+}
+
+async function init() {
+  document.getElementById("adminName").textContent = localStorage.getItem("username") || "";
+  await loadDashboard();
+}
+
+function showPanel(name, el) {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".menu-item").forEach(m => m.classList.remove("active"));
+  document.getElementById("panel-" + name).classList.add("active");
+  el.classList.add("active");
+  const titles = {
+    dashboard:"📊 Dashboard", products:"🎮 จัดการสินค้า",
+    orders:"📋 ออเดอร์", add:"➕ เพิ่มสินค้า"
+  };
+  document.getElementById("pageTitle").textContent = titles[name] || name;
+  if (name === "products")  loadProducts();
+  if (name === "orders")    loadOrders();
+  if (name === "dashboard") loadDashboard();
+}
+
+// ── DASHBOARD ──
+async function loadDashboard() {
+  try {
+    const [accRes, ordRes] = await Promise.all([
+      fetch(API + "/accounts"),
+      authFetch(API + "/admin/orders")
+    ]);
+    const accounts = await accRes.json();
+    const orders   = await ordRes.json();
+    const total    = accounts.length;
+    const avail    = accounts.filter(a => a.status !== "sold").length;
+    document.getElementById("s-total").textContent = total;
+    document.getElementById("s-avail").textContent = avail;
+    document.getElementById("s-sold").textContent  = total - avail;
+
+    const paidOrd = Array.isArray(orders) ? orders.filter(o => o.status === "paid").slice(0,5) : [];
+    const ro = document.getElementById("recentOrders");
+    ro.innerHTML = !paidOrd.length
+      ? `<div class="empty"><div class="icon">✅</div>ไม่มีออเดอร์รอยืนยัน</div>`
+      : `<div class="table-wrap"><table><thead><tr><th>ผู้ซื้อ</th><th>สินค้า</th><th>ราคา</th><th>จัดการ</th></tr></thead><tbody>
+        ${paidOrd.map(o=>`<tr>
+          <td>${o.user_id?.username||"-"}</td>
+          <td style="max-width:180px">${o.detail||"-"}</td>
+          <td style="color:var(--gold);font-weight:700">฿${Number(o.price).toLocaleString()}</td>
+          <td><button class="btn-success" onclick="openModal('${o._id}','${API}${o.slip}')">🧾 ดูสลิป</button></td>
+        </tr>`).join("")}</tbody></table></div>`;
+  } catch (err) {
+    if (err.message !== "Unauthorized") showToast("❌ โหลด Dashboard ไม่ได้","error");
+  }
+}
+
+// ── PRODUCTS ──
+async function loadProducts() {
+  try {
+    const res  = await fetch(API + "/accounts");
+    const data = await res.json();
+    const tbody = document.getElementById("productTable");
+    if (!Array.isArray(data)||!data.length) { tbody.innerHTML=`<tr><td colspan="6"><div class="empty"><div class="icon">📭</div>ยังไม่มีสินค้า</div></td></tr>`; return; }
+    tbody.innerHTML = data.map(p => {
+      const imgs   = p.images?.length ? p.images : (p.image?[p.image]:[]);
+      const imgHtml = imgs.length
+        ? `<div class="td-img-wrap"><img src="${API}${imgs[0]}" class="td-img" onerror="this.style.display='none'">${imgs.length>1?`<div class="td-img-more">+${imgs.length-1}</div>`:""}</div>`
+        : `<div class="td-img-placeholder">🎮</div>`;
+      const date   = p.createdAt ? new Date(p.createdAt).toLocaleDateString("th-TH") : "-";
+      const isSold = p.status === "sold";
+      return `<tr><td>${imgHtml}</td><td style="max-width:220px;font-size:13px">${p.detail||"-"}</td>
+        <td style="color:var(--gold);font-weight:700">฿${Number(p.price).toLocaleString()}</td>
+        <td><span class="badge ${isSold?"sold":"available"}">${isSold?"❌ ขายแล้ว":"✅ พร้อมขาย"}</span></td>
+        <td style="color:var(--muted);font-size:12px">${date}</td>
+        <td><button class="btn-danger" onclick="deleteProduct('${p._id}')">🗑 ลบ</button></td></tr>`;
+    }).join("");
+  } catch (err) { if (err.message!=="Unauthorized") showToast("❌ โหลดสินค้าไม่ได้","error"); }
+}
+async function deleteProduct(id) {
+  if (!confirm("ยืนยันลบสินค้านี้?")) return;
+  try { await authFetch(API+"/admin/account/"+id,{method:"DELETE"}); showToast("✅ ลบสินค้าแล้ว"); loadProducts(); }
+  catch (err) { if (err.message!=="Unauthorized") showToast("❌ ลบไม่ได้","error"); }
+}
+
+// ── ORDERS ──
+async function loadOrders() {
+  try {
+    const res  = await authFetch(API + "/admin/orders");
+    const data = await res.json();
+    const tbody = document.getElementById("orderTable");
+    if (!Array.isArray(data)||!data.length) { tbody.innerHTML=`<tr><td colspan="7"><div class="empty"><div class="icon">📭</div>ยังไม่มีออเดอร์</div></td></tr>`; return; }
+    tbody.innerHTML = data.map(o => {
+      const date = o.createdAt?new Date(o.createdAt).toLocaleDateString("th-TH"):"-";
+      const slipUrl = o.slip?`${API}${o.slip}`:null;
+      return `<tr>
+        <td style="font-weight:700">${o.user_id?.username||"-"}</td>
+        <td style="max-width:180px;font-size:12px">${o.detail||"-"}</td>
+        <td style="color:var(--gold);font-weight:700">฿${Number(o.price).toLocaleString()}</td>
+        <td><span class="badge ${o.status}">${statusTH(o.status)}</span></td>
+        <td>${slipUrl?`<button class="btn-outline" onclick="openModal('${o._id}','${slipUrl}')">🧾 ดูสลิป</button>`:"<span style='color:var(--muted)'>-</span>"}</td>
+        <td style="color:var(--muted);font-size:12px">${date}</td>
+        <td style="display:flex;gap:6px;flex-wrap:wrap">
+          ${o.status==="paid"?`<button class="btn-success" onclick="updateOrder('${o._id}','confirmed')">✅</button><button class="btn-danger" onclick="updateOrder('${o._id}','rejected')">❌</button>`:"-"}
+        </td></tr>`;
+    }).join("");
+  } catch (err) { if (err.message!=="Unauthorized") showToast("❌ โหลดออเดอร์ไม่ได้","error"); }
+}
+function statusTH(s){return{pending:"⏳ รอชำระ",paid:"💳 รอยืนยัน",confirmed:"✅ ยืนยันแล้ว",rejected:"❌ ปฏิเสธ"}[s]||s;}
+async function updateOrder(id,status){
+  try{
+    await authFetch(API+"/admin/order/"+id,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({status})});
+    showToast(status==="confirmed"?"✅ ยืนยันแล้ว":"❌ ปฏิเสธแล้ว");
+    closeModal();loadOrders();loadDashboard();
+  }catch(err){if(err.message!=="Unauthorized")showToast("❌ เกิดข้อผิดพลาด","error");}
+}
+function openModal(id,slipUrl){currentOrderId=id;document.getElementById("modalSlipImg").src=slipUrl;document.getElementById("slipModal").classList.add("open");}
+function closeModal(){document.getElementById("slipModal").classList.remove("open");}
+function confirmOrder(){updateOrder(currentOrderId,"confirmed");}
+function rejectOrder(){updateOrder(currentOrderId,"rejected");}
+document.getElementById("slipModal").addEventListener("click",e=>{if(e.target===document.getElementById("slipModal"))closeModal();});
+
+// ── ADD PRODUCT ──
+const MAX_IMAGES=8;
+function handleDragOver(e){e.preventDefault();document.getElementById("uploadZone").classList.add("dragover");}
+function handleDragLeave(){document.getElementById("uploadZone").classList.remove("dragover");}
+function handleDrop(e){e.preventDefault();document.getElementById("uploadZone").classList.remove("dragover");handleImageSelect(e.dataTransfer.files);}
+function handleImageSelect(files){
+  const newFiles=Array.from(files).filter(f=>f.type.startsWith("image/"));
+  const remaining=MAX_IMAGES-selectedFiles.length;
+  if(remaining<=0){showToast(`⚠️ เพิ่มได้สูงสุด ${MAX_IMAGES} รูป`,"error");return;}
+  selectedFiles=[...selectedFiles,...newFiles.slice(0,remaining)];
+  if(newFiles.length>remaining)showToast(`⚠️ เลือกได้อีก ${remaining} รูปเท่านั้น`,"error");
+  renderPreviews();
+}
+function renderPreviews(){
+  const grid=document.getElementById("previewGrid"),count=document.getElementById("previewCount");
+  if(!selectedFiles.length){grid.style.display="none";count.style.display="none";return;}
+  grid.style.display="grid";count.style.display="block";
+  count.innerHTML=`เลือกแล้ว <strong>${selectedFiles.length}</strong> / ${MAX_IMAGES} รูป ${selectedFiles.length<MAX_IMAGES?`· <span style="color:var(--gold);cursor:pointer" onclick="document.getElementById('addImages').click()">+ เพิ่มรูป</span>`:""}`;
+  grid.innerHTML=selectedFiles.map((file,i)=>{
+    const url=URL.createObjectURL(file);
+    return `<div class="preview-item" id="prev-${i}"><img src="${url}" alt=""><button class="remove-btn" onclick="removeImage(${i})">✕</button>${i===0?'<div class="thumb-label">THUMBNAIL</div>':""}</div>`;
+  }).join("");
+}
+function removeImage(i){const img=document.querySelector(`#prev-${i} img`);if(img)URL.revokeObjectURL(img.src);selectedFiles.splice(i,1);renderPreviews();}
+async function addProduct(){
+  const detail=document.getElementById("addDetail").value.trim(),price=document.getElementById("addPrice").value;
+  if(!detail||!price){showToast("⚠️ กรุณากรอก รายละเอียด และ ราคา","error");return;}
+  const btn=document.getElementById("addBtn");btn.disabled=true;btn.innerHTML="⏳ กำลังเพิ่มสินค้า...";
+  const form=new FormData();
+  form.append("detail",detail);form.append("price",price);
+  form.append("game",document.getElementById("addGame").value);
+  form.append("secret",document.getElementById("addSecret").value.trim());
+  selectedFiles.forEach(f=>form.append("images",f));
+  const prog=document.getElementById("uploadProgress");prog.classList.add("show");
+  document.getElementById("progressBar").style.width="30%";
+  document.getElementById("progressLabel").textContent="⏳ กำลังอัพโหลด...";
+  try{
+    const res=await authFetch(API+"/admin/account",{method:"POST",body:form});
+    document.getElementById("progressBar").style.width="100%";
+    document.getElementById("progressLabel").textContent="✅ สำเร็จ!";
+    const d=await res.json();
+    if(res.ok){
+      showToast(`✅ เพิ่มสินค้าสำเร็จ!${selectedFiles.length?` (${selectedFiles.length} รูป)`:""}`);
+      document.getElementById("addDetail").value="";document.getElementById("addPrice").value="";
+      document.getElementById("addSecret").value="";document.getElementById("addImages").value="";
+      selectedFiles=[];renderPreviews();
+      setTimeout(()=>{prog.classList.remove("show");document.getElementById("progressBar").style.width="0%";},1500);
+    }else{showToast("❌ "+(d.message||"เพิ่มไม่ได้"),"error");prog.classList.remove("show");}
+  }catch(err){if(err.message!=="Unauthorized")showToast("❌ เกิดข้อผิดพลาด","error");prog.classList.remove("show");}
+  btn.disabled=false;btn.innerHTML="➕ เพิ่มสินค้า";
+}
+
+// ── UTILS ──
+function logout(){localStorage.clear();location.href="auth.html";}
+function showToast(msg,type="success"){
+  const t=document.getElementById("toast");t.textContent=msg;t.className=`toast ${type} show`;
+  setTimeout(()=>t.classList.remove("show"),3500);
+}
+init();
+</script>
+</body>
+</html>

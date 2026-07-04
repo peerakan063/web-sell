@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชำระเงิน | หนุ่มกล้ามทอง</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Kanit',sans-serif; background:#f0f2f5; color:#1a1a2e; min-height:100vh; padding-bottom:100px; }
+
+/* ===== HEADER ===== */
+.header {
+  background:linear-gradient(135deg, #1a3a8f 0%, #2952c8 60%, #1e40af 100%);
+  padding:20px 20px 28px; text-align:center; position:relative; overflow:hidden;
+}
+.header::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.08) 0%, transparent 60%),
+             radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 50%);
+}
+.header-title { font-size:18px; font-weight:700; color:white; margin-bottom:24px; position:relative; z-index:1; }
+
+/* STEPPER */
+.stepper { display:flex; align-items:center; justify-content:center; position:relative; z-index:1; }
+.step { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.step-circle {
+  width:48px; height:48px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; font-weight:700; transition:all 0.3s;
+}
+.step-circle.active { background:linear-gradient(135deg,#f97316,#ea6500); box-shadow:0 4px 16px rgba(249,115,22,0.5); color:white; }
+.step-circle.done   { background:rgba(255,255,255,0.2); border:2px solid rgba(255,255,255,0.5); color:white; }
+.step-circle.pending{ background:rgba(255,255,255,0.1); border:2px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.4); }
+.step-label { font-size:12px; font-weight:600; color:white; }
+.step-label.pending { color:rgba(255,255,255,0.4); }
+.step-line { width:60px; height:2px; background:rgba(255,255,255,0.2); margin-bottom:20px; transition:background 0.3s; }
+.step-line.done { background:rgba(255,255,255,0.6); }
+
+/* PRODUCT BAR */
+.product-bar {
+  background:white; border-bottom:1px solid #e5e7eb;
+  padding:14px 20px; display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+}
+.product-bar-left { display:flex; align-items:center; gap:12px; }
+.product-thumb-placeholder {
+  width:44px; height:44px; border-radius:8px;
+  background:linear-gradient(135deg,#1a3a8f,#2952c8);
+  display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;
+}
+.product-bar-name { font-size:14px; font-weight:700; color:#1a1a2e; }
+.product-bar-id { font-size:12px; color:#9ca3af; margin-top:2px; }
+.product-bar-price { font-size:16px; font-weight:900; color:#f97316; }
+
+/* CONTENT */
+.content { max-width:560px; margin:0 auto; padding:20px 16px; }
+
+/* SECTION CARD */
+.section-card {
+  background:white; border-radius:16px; padding:20px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.06); margin-bottom:16px;
+}
+.section-title {
+  font-size:15px; font-weight:700; color:#1a1a2e;
+  margin-bottom:16px; display:flex; align-items:center; gap:8px;
+}
+
+/* PAYMENT METHOD */
+.method-option {
+  border:2px solid #e5e7eb; border-radius:12px; padding:14px 16px;
+  display:flex; align-items:center; gap:12px; cursor:pointer;
+  transition:all 0.2s; margin-bottom:10px; position:relative;
+}
+.method-option:last-child { margin-bottom:0; }
+.method-option:hover { border-color:#93c5fd; background:#f8faff; }
+.method-option.selected { border-color:#2952c8; background:#eff6ff; }
+.method-logo {
+  width:40px; height:40px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0;
+}
+.method-info { flex:1; }
+.method-name   { font-size:13px; font-weight:700; color:#1a1a2e; }
+.method-number { font-size:15px; font-weight:900; color:#1a1a2e; letter-spacing:1px; }
+.method-owner  { font-size:12px; color:#9ca3af; margin-top:2px; }
+.radio-dot {
+  width:20px; height:20px; border-radius:50%; border:2px solid #d1d5db;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.2s;
+}
+.method-option.selected .radio-dot { border-color:#2952c8; background:#2952c8; }
+.method-option.selected .radio-dot::after { content:''; width:8px; height:8px; border-radius:50%; background:white; display:block; }
+
+/* SUMMARY */
+.summary-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; }
+.summary-row + .summary-row { border-top:1px solid #f3f4f6; }
+.summary-label { font-size:14px; color:#6b7280; }
+.summary-value { font-size:14px; color:#1a1a2e; font-weight:600; }
+.summary-total .summary-label { font-size:15px; font-weight:700; color:#1a1a2e; }
+.summary-total .summary-value { font-size:18px; font-weight:900; color:#f97316; }
+
+/* BUYER INFO */
+.info-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; }
+.info-row + .info-row { border-top:1px solid #f3f4f6; }
+.info-label { font-size:13px; color:#9ca3af; display:flex; align-items:center; gap:6px; }
+.info-label::before { content:'•'; color:#2952c8; font-size:18px; line-height:1; }
+.info-value { font-size:14px; font-weight:700; color:#1a1a2e; }
+
+/* BANK DETAIL */
+.bank-detail {
+  background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px;
+  padding:20px; margin-bottom:16px; text-align:center;
+}
+.bank-detail-name   { font-size:13px; color:#2952c8; font-weight:600; margin-bottom:6px; }
+.bank-detail-number { font-size:26px; font-weight:900; color:#1a1a2e; letter-spacing:3px; }
+.bank-detail-owner  { font-size:12px; color:#6b7280; margin-top:4px; }
+.bank-detail-amount { font-size:18px; font-weight:900; color:#f97316; margin-top:10px; padding-top:10px; border-top:1px solid #bfdbfe; }
+
+/* UPLOAD */
+.upload-zone {
+  border:2px dashed #d1d5db; border-radius:12px; padding:32px 20px;
+  text-align:center; cursor:pointer; transition:all 0.2s; background:#fafafa;
+}
+.upload-zone:hover { border-color:#2952c8; background:#eff6ff; }
+.upload-zone.has-file { border-color:#22c55e; background:#f0fdf4; border-style:solid; }
+.upload-zone-icon { font-size:40px; margin-bottom:10px; }
+.upload-zone-text { font-size:14px; font-weight:700; color:#374151; }
+.upload-zone-sub { font-size:12px; color:#9ca3af; margin-top:4px; }
+.slip-preview { width:100%; border-radius:10px; max-height:300px; object-fit:contain; display:none; margin-top:14px; }
+.slip-preview.show { display:block; }
+
+/* SUCCESS */
+.success-screen { display:none; text-align:center; padding:40px 20px; }
+.success-screen.show { display:block; }
+.success-icon { font-size:72px; margin-bottom:20px; animation:pop 0.5s ease; }
+@keyframes pop { 0%{transform:scale(0)} 80%{transform:scale(1.15)} 100%{transform:scale(1)} }
+.success-title { font-size:22px; font-weight:900; color:#1a1a2e; margin-bottom:8px; }
+.success-sub { font-size:14px; color:#6b7280; line-height:1.8; }
+.success-card { background:white; border-radius:16px; padding:20px; margin:24px 0; box-shadow:0 2px 12px rgba(0,0,0,0.06); text-align:left; }
+.btn-home {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:14px 32px; border-radius:12px; border:none;
+  background:linear-gradient(135deg,#1a3a8f,#2952c8);
+  color:white; font-family:'Kanit',sans-serif; font-size:15px; font-weight:700; cursor:pointer;
+}
+
+/* BOTTOM BAR */
+.bottom-bar {
+  position:fixed; bottom:0; left:0; right:0;
+  background:white; border-top:1px solid #e5e7eb;
+  padding:12px 16px; z-index:100; box-shadow:0 -4px 16px rgba(0,0,0,0.08);
+}
+.btn-next {
+  width:100%; max-width:560px; margin:0 auto; display:flex;
+  padding:16px 24px; border-radius:12px; border:none;
+  background:linear-gradient(135deg,#f97316,#ea6500);
+  color:white; font-family:'Kanit',sans-serif; font-size:16px; font-weight:700;
+  cursor:pointer; transition:all 0.2s; align-items:center; justify-content:center; gap:8px;
+}
+.btn-next:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(249,115,22,0.4); }
+.btn-next:disabled { background:#e5e7eb; color:#9ca3af; transform:none; box-shadow:none; cursor:not-allowed; }
+
+.toast { position:fixed; bottom:88px; right:20px; z-index:999; padding:12px 18px; border-radius:10px; font-size:13px; font-weight:600; display:none; align-items:center; gap:8px; }
+.toast.show { display:flex; }
+.toast.success { background:#166534; border:1px solid #22c55e; color:#86efac; }
+.toast.error   { background:#7f1d1d; border:1px solid #ef4444; color:#fca5a5; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-title">ชำระเงิน</div>
+  <div class="stepper">
+    <div class="step">
+      <div class="step-circle active" id="c1">🏦</div>
+      <div class="step-label" id="l1">เลือกช่องทาง</div>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step">
+      <div class="step-circle pending" id="c2">⊞</div>
+      <div class="step-label pending" id="l2">ชำระเงิน</div>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div class="step">
+      <div class="step-circle pending" id="c3">✓</div>
+      <div class="step-label pending" id="l3">สำเร็จ</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT BAR -->
+<div class="product-bar">
+  <div class="product-bar-left">
+    <div class="product-thumb-placeholder" id="productThumb">🎮</div>
+    <div>
+      <div class="product-bar-name" id="productName">FREEFIRE</div>
+      <div class="product-bar-id"  id="productCode">รหัส: ------</div>
+    </div>
+  </div>
+  <div class="product-bar-price" id="productPrice">0.00 บาท</div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- STEP 1 -->
+  <div id="view1">
+    <div class="section-card">
+      <div class="section-title">🏦 เลือกช่องทางชำระเงิน</div>
+      <div class="method-option selected" onclick="selectMethod('kbank')" id="opt-kbank">
+        <div class="method-logo" style="background:#1ba345;color:white">🌿</div>
+        <div class="method-info">
+          <div class="method-name">ธนาคารกสิกรไทย</div>
+          <div class="method-number">059-1-25181-3</div>
+          <div class="method-owner">นาย อานนท์ พูดแจ้ง</div>
+        </div>
+        <div class="radio-dot"></div>
+      </div>
+      <div class="method-option" onclick="selectMethod('truemoney')" id="opt-truemoney">
+        <div class="method-logo">💳</div>
+        <div class="method-info">
+          <div class="method-name">True Money Wallet</div>
+          <div class="method-number">059-125-1813</div>
+          <div class="method-owner">นาย อานนท์ พูดแจ้ง</div>
+        </div>
+        <div class="radio-dot"></div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title">📋 สรุปรายการสั่งซื้อ</div>
+      <div class="summary-row">
+        <span class="summary-label">ราคาสินค้า</span>
+        <span class="summary-value" id="sum-price">0.00 บาท</span>
+      </div>
+      <div class="summary-row summary-total">
+        <span class="summary-label">ยอดที่ต้องชำระ</span>
+        <span class="summary-value" id="sum-total">0.00 บาท</span>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title">👤 ข้อมูลผู้ซื้อ</div>
+      <div class="info-row">
+        <span class="info-label">ชื่อผู้ใช้</span>
+        <span class="info-value" id="buyer-name">-</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">รหัสออเดอร์</span>
+        <span class="info-value" id="buyer-order">-</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div id="view2" style="display:none">
+    <div class="section-card">
+      <div class="section-title">💳 โอนเงินมาที่</div>
+      <div class="bank-detail">
+        <div class="bank-detail-name"   id="bd-bank">ธนาคารกสิกรไทย</div>
+        <div class="bank-detail-number" id="bd-num">059-1-25181-3</div>
+        <div class="bank-detail-owner"  id="bd-owner">นาย อานนท์ พูดแจ้ง</div>
+        <div class="bank-detail-amount" id="bd-amount">฿0.00</div>
+      </div>
+      <p style="font-size:13px;color:#6b7280;text-align:center;margin-bottom:0">
+        โอนแล้วกรุณาอัพโหลดสลิปด้านล่างครับ
+      </p>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title">🧾 อัพโหลดสลิปการโอน</div>
+      <div class="upload-zone" id="uploadZone" onclick="document.getElementById('slipInput').click()">
+        <div class="upload-zone-icon" id="uploadIcon">📎</div>
+        <div class="upload-zone-text"  id="uploadText">คลิกเพื่อเลือกรูปสลิป</div>
+        <div class="upload-zone-sub">รองรับ JPG, PNG (สูงสุด 5MB)</div>
+      </div>
+      <input type="file" id="slipInput" accept="image/*" style="display:none" onchange="previewSlip(this)">
+      <img class="slip-preview" id="slipPreview" alt="slip">
+    </div>
+  </div>
+
+  <!-- STEP 3 SUCCESS -->
+  <div class="success-screen" id="view3">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">ส่งสลิปสำเร็จแล้ว!</div>
+    <div class="success-sub">ขอบคุณที่ใช้บริการครับ<br>แอดมินจะยืนยันและส่งข้อมูลให้เร็วๆ นี้</div>
+    <div class="success-card">
+      <div class="info-row">
+        <span class="info-label">รหัสออเดอร์</span>
+        <span class="info-value" id="done-order">-</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">ยอดชำระ</span>
+        <span class="info-value" style="color:#f97316" id="done-amount">-</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">สถานะ</span>
+        <span class="info-value" style="color:#2952c8">⏳ รอแอดมินยืนยัน</span>
+      </div>
+    </div>
+    <button class="btn-home" onclick="location.href='index.html'">🏠 กลับหน้าหลัก</button>
+  </div>
+
+</div>
+
+<!-- BOTTOM -->
+<div class="bottom-bar" id="bottomBar">
+  <button class="btn-next" id="btnNext" onclick="nextStep()">ถัดไป →</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = "http://localhost:3000";
+let step = 1;
+let method = "kbank";
+let slipFile = null;
+let orderId = null;
+let price = 0;
+
+const METHODS = {
+  kbank:     { name:"ธนาคารกสิกรไทย",   num:"059-1-25181-3", owner:"นาย อานนท์ พูดแจ้ง" },
+  truemoney: { name:"True Money Wallet", num:"059-125-1813",  owner:"นาย อานนท์ พูดแจ้ง" }
+};
+
+async function init() {
+  const token = localStorage.getItem("token");
+  if (!token) { location.href = "auth.html"; return; }
+
+  orderId = localStorage.getItem("order_id");
+  const accountId = localStorage.getItem("view_id");
+
+  document.getElementById("buyer-name").textContent  = localStorage.getItem("username") || "-";
+  document.getElementById("buyer-order").textContent = orderId ? "#" + orderId.slice(-8).toUpperCase() : "-";
+  document.getElementById("done-order").textContent  = orderId ? "#" + orderId.slice(-8).toUpperCase() : "-";
+
+  if (accountId) {
+    try {
+      const res = await fetch(API + "/accounts/" + accountId);
+      const p = await res.json();
+      price = Number(p.price);
+      const priceStr = price.toLocaleString("th-TH", { minimumFractionDigits:2 });
+
+      document.getElementById("productName").textContent  = (p.game || "FREEFIRE").toUpperCase();
+      document.getElementById("productCode").textContent  = "รหัส: " + (p._id || "").slice(-5).toUpperCase();
+      document.getElementById("productPrice").textContent = priceStr + " บาท";
+      document.getElementById("sum-price").textContent    = priceStr + " บาท";
+      document.getElementById("sum-total").textContent    = priceStr + " บาท";
+      document.getElementById("bd-amount").textContent    = "฿" + priceStr;
+      document.getElementById("done-amount").textContent  = priceStr + " บาท";
+
+      const imgs = p.images?.length ? p.images : (p.image ? [p.image] : []);
+      if (imgs.length) {
+        document.getElementById("productThumb").innerHTML =
+          `<img src="${API}${imgs[0]}" style="width:44px;height:44px;border-radius:8px;object-fit:cover" onerror="this.parentElement.textContent='🎮'">`;
+      }
+    } catch(e) { console.error(e); }
+  }
+}
+
+function selectMethod(key) {
+  method = key;
+  document.querySelectorAll(".method-option").forEach(el => el.classList.remove("selected"));
+  document.getElementById("opt-" + key).classList.add("selected");
+}
+
+function previewSlip(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showToast("⚠️ ไฟล์ใหญ่เกิน 5MB", "error"); return; }
+  slipFile = file;
+  const preview = document.getElementById("slipPreview");
+  preview.src = URL.createObjectURL(file);
+  preview.classList.add("show");
+  const zone = document.getElementById("uploadZone");
+  zone.classList.add("has-file");
+  document.getElementById("uploadIcon").textContent = "✅";
+  document.getElementById("uploadText").textContent = file.name;
+  document.getElementById("btnNext").disabled = false;
+}
+
+function nextStep() {
+  if (step === 1) goStep2();
+  else if (step === 2) submitSlip();
+}
+
+function goStep2() {
+  const m = METHODS[method];
+  document.getElementById("bd-bank").textContent  = m.name;
+  document.getElementById("bd-num").textContent   = m.num;
+  document.getElementById("bd-owner").textContent = m.owner;
+
+  document.getElementById("view1").style.display = "none";
+  document.getElementById("view2").style.display = "block";
+
+  // stepper
+  document.getElementById("c1").className = "step-circle done";
+  document.getElementById("c1").textContent = "✓";
+  document.getElementById("c2").className = "step-circle active";
+  document.getElementById("c2").textContent = "⊞";
+  document.getElementById("l2").className = "step-label";
+  document.getElementById("line1").className = "step-line done";
+
+  document.getElementById("btnNext").textContent = "ส่งสลิป →";
+  document.getElementById("btnNext").disabled = true;
+  step = 2;
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+
+async function submitSlip() {
+  if (!slipFile) { showToast("⚠️ กรุณาเลือกสลิปก่อน", "error"); return; }
+  if (!orderId)  { showToast("⚠️ ไม่พบรหัสออเดอร์", "error"); return; }
+
+  const btn = document.getElementById("btnNext");
+  btn.disabled = true;
+  btn.textContent = "⏳ กำลังส่ง...";
+
+  const form = new FormData();
+  form.append("order_id", orderId);
+  form.append("slip", slipFile);
+
+  try {
+    const res = await fetch(API + "/order/upload-slip", {
+      method: "POST",
+      headers: { Authorization: localStorage.getItem("token") },
+      body: form
+    });
+    const d = await res.json();
+    if (res.ok) {
+      goStep3();
+    } else {
+      showToast("❌ " + (d.message || "ส่งสลิปไม่ได้"), "error");
+      btn.disabled = false;
+      btn.textContent = "ส่งสลิป →";
+    }
+  } catch {
+    showToast("❌ เชื่อมต่อ server ไม่ได้", "error");
+    btn.disabled = false;
+    btn.textContent = "ส่งสลิป →";
+  }
+}
+
+function goStep3() {
+  document.getElementById("view2").style.display = "none";
+  document.getElementById("view3").classList.add("show");
+  document.getElementById("bottomBar").style.display = "none";
+
+  document.getElementById("c2").className = "step-circle done";
+  document.getElementById("c2").textContent = "✓";
+  document.getElementById("c3").className = "step-circle active";
+  document.getElementById("l3").className = "step-label";
+  document.getElementById("line2").className = "step-line done";
+
+  localStorage.removeItem("order_id");
+  step = 3;
+  window.scrollTo({ top:0, behavior:"smooth" });
+}
+
+function showToast(msg, type = "success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove("show"), 3500);
+}
+
+init();
+</script>
+</body>
+</html>

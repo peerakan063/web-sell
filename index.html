@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หนุ่มกล้ามทอง | ขายไอดีเกม</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #ffd700;
+  --gold2: #ffaa00;
+  --dark: #080810;
+  --dark2: #0f0f1a;
+  --dark3: #161628;
+  --dark4: #1e1e35;
+  --text: #e8e8f0;
+  --muted: #7070a0;
+  --green: #22c55e;
+  --red: #ef4444;
+  --orange: #f97316;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Kanit',sans-serif; background:var(--dark); color:var(--text); min-height:100vh; }
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:var(--dark2); }
+::-webkit-scrollbar-thumb { background:var(--gold2); border-radius:3px; }
+
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background:rgba(8,8,16,0.95); backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,215,0,0.15);
+  padding:0 24px; height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.nav-logo {
+  display:flex; align-items:center; gap:10px;
+  font-size:20px; font-weight:900; color:var(--gold);
+  text-decoration:none; letter-spacing:1px;
+}
+.nav-logo span { color:white; }
+.nav-logo .icon {
+  width:36px; height:36px; background:var(--gold);
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-size:18px; color:#000;
+}
+.nav-links { display:flex; gap:8px; align-items:center; }
+.nav-links a {
+  padding:8px 16px; border-radius:8px; text-decoration:none;
+  color:var(--muted); font-size:14px; font-weight:600; transition:all 0.2s;
+}
+.nav-links a:hover, .nav-links a.active { color:var(--gold); }
+.nav-auth { display:flex; gap:8px; }
+.btn-login {
+  padding:8px 18px; border-radius:8px; border:1px solid rgba(255,215,0,0.4);
+  background:transparent; color:var(--gold); font-family:'Kanit',sans-serif;
+  font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s;
+  text-decoration:none; display:inline-flex; align-items:center; gap:6px;
+}
+.btn-login:hover { background:rgba(255,215,0,0.1); }
+.btn-register {
+  padding:8px 18px; border-radius:8px; border:none;
+  background:var(--gold); color:#000; font-family:'Kanit',sans-serif;
+  font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;
+  text-decoration:none; display:inline-flex; align-items:center; gap:6px;
+}
+.btn-register:hover { background:var(--gold2); transform:translateY(-1px); }
+.user-btn {
+  padding:6px 14px; border-radius:8px; border:1px solid rgba(255,215,0,0.3);
+  background:var(--dark3); color:var(--text); font-family:'Kanit',sans-serif;
+  font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px;
+}
+.user-avatar {
+  width:26px; height:26px; border-radius:50%;
+  background:var(--gold); color:#000; font-size:12px; font-weight:900;
+  display:flex; align-items:center; justify-content:center;
+}
+
+.hero {
+  padding-top:64px; min-height:520px;
+  background:linear-gradient(135deg, #080810 0%, #0f0f20 40%, #1a0a05 100%);
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background:radial-gradient(ellipse at 70% 50%, rgba(255,140,0,0.12) 0%, transparent 60%),
+             radial-gradient(ellipse at 20% 80%, rgba(255,215,0,0.08) 0%, transparent 50%);
+}
+.hero-grid {
+  position:absolute; inset:0;
+  background-image:linear-gradient(rgba(255,215,0,0.04) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(255,215,0,0.04) 1px, transparent 1px);
+  background-size:40px 40px;
+}
+.hero-content { position:relative; z-index:2; text-align:center; padding:60px 20px; }
+.hero-badge {
+  display:inline-block; padding:4px 16px; border-radius:20px;
+  border:1px solid rgba(255,215,0,0.4); color:var(--gold);
+  font-size:12px; font-weight:600; letter-spacing:2px; margin-bottom:20px; text-transform:uppercase;
+}
+.hero h1 { font-size:clamp(36px,6vw,72px); font-weight:900; line-height:1.1; margin-bottom:16px; }
+.hero h1 .gold { color:var(--gold); text-shadow:0 0 40px rgba(255,215,0,0.4); }
+.hero h1 .white { color:white; }
+.hero p { font-size:16px; color:var(--muted); max-width:500px; margin:0 auto 32px; line-height:1.7; }
+.hero-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.btn-hero-primary {
+  padding:14px 28px; border-radius:10px; border:none;
+  background:var(--orange); color:white; font-family:'Kanit',sans-serif;
+  font-size:15px; font-weight:700; cursor:pointer; transition:all 0.2s;
+  display:inline-flex; align-items:center; gap:8px;
+}
+.btn-hero-primary:hover { background:#ea6500; transform:translateY(-2px); box-shadow:0 8px 24px rgba(249,115,22,0.4); }
+.btn-hero-secondary {
+  padding:14px 28px; border-radius:10px;
+  border:1px solid rgba(255,215,0,0.5); background:transparent;
+  color:var(--gold); font-family:'Kanit',sans-serif;
+  font-size:15px; font-weight:700; cursor:pointer; transition:all 0.2s;
+  display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+}
+.btn-hero-secondary:hover { background:rgba(255,215,0,0.1); transform:translateY(-2px); }
+
+/* CONTACT MODAL */
+.modal-overlay {
+  position:fixed; inset:0; z-index:500;
+  background:rgba(0,0,0,0.75); backdrop-filter:blur(6px);
+  display:none; align-items:center; justify-content:center;
+}
+.modal-overlay.open { display:flex; }
+.modal-box {
+  background:var(--dark3); border:1px solid rgba(255,215,0,0.3);
+  border-radius:18px; padding:32px; width:90%; max-width:420px;
+  text-align:center; animation:popIn 0.3s ease;
+}
+@keyframes popIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+.modal-box h2 { font-size:20px; font-weight:900; color:var(--gold); margin-bottom:8px; }
+.modal-box p { font-size:13px; color:var(--muted); margin-bottom:24px; }
+
+.contact-links { display:flex; flex-direction:column; gap:12px; margin-bottom:20px; }
+.contact-link {
+  display:flex; align-items:center; gap:14px;
+  text-decoration:none; padding:12px 16px;
+  border-radius:12px; transition:all 0.2s; cursor:pointer;
+}
+.contact-link.line   { background:rgba(0,195,0,0.08);  border:1px solid rgba(0,195,0,0.25); }
+.contact-link.fb     { background:rgba(24,119,242,0.08); border:1px solid rgba(24,119,242,0.25); }
+.contact-link.tiktok { background:rgba(255,0,80,0.08);  border:1px solid rgba(255,0,80,0.25); }
+.contact-link.line:hover   { background:rgba(0,195,0,0.18); }
+.contact-link.fb:hover     { background:rgba(24,119,242,0.18); }
+.contact-link.tiktok:hover { background:rgba(255,0,80,0.18); }
+.contact-link-icon { font-size:26px; flex-shrink:0; }
+.contact-link-info { text-align:left; flex:1; }
+.contact-link-label { font-size:11px; font-weight:700; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+.contact-link-val { font-size:15px; font-weight:700; color:white; margin-top:2px; }
+.contact-link-arrow { font-size:18px; flex-shrink:0; }
+.contact-link.line   .contact-link-arrow { color:#00c300; }
+.contact-link.fb     .contact-link-arrow { color:#1877f2; }
+.contact-link.tiktok .contact-link-arrow { color:#ff0050; }
+
+.modal-btns { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.btn-close-modal {
+  padding:10px 28px; border-radius:10px; border:1px solid rgba(255,255,255,0.1);
+  background:transparent; color:var(--muted); font-family:'Kanit',sans-serif;
+  font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s;
+}
+.btn-close-modal:hover { border-color:rgba(255,215,0,0.3); color:var(--gold); }
+
+.stats-bar {
+  background:var(--dark2); border-top:1px solid rgba(255,215,0,0.1);
+  border-bottom:1px solid rgba(255,215,0,0.1);
+  padding:24px 20px; display:flex; justify-content:center; gap:60px; flex-wrap:wrap;
+}
+.stat-item { text-align:center; }
+.stat-num { font-size:32px; font-weight:900; }
+.stat-num.gold { color:var(--gold); }
+.stat-num.green { color:var(--green); }
+.stat-num.red { color:var(--red); }
+.stat-label { font-size:13px; color:var(--muted); margin-top:2px; }
+
+.ticker {
+  background:linear-gradient(90deg, var(--dark3), var(--dark4));
+  border-top:1px solid rgba(255,140,0,0.2); border-bottom:1px solid rgba(255,140,0,0.2);
+  padding:10px 0; overflow:hidden;
+}
+.ticker-inner { display:flex; gap:0; white-space:nowrap; animation:scroll-ticker 30s linear infinite; }
+.ticker-item { padding:0 32px; font-size:13px; color:var(--muted); font-weight:600; display:inline-flex; align-items:center; gap:8px; }
+.ticker-item .dot { width:6px; height:6px; border-radius:50%; background:var(--gold); }
+@keyframes scroll-ticker { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
+
+.section { padding:48px 20px; max-width:1200px; margin:0 auto; }
+.section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; }
+.section-title { font-size:22px; font-weight:900; color:white; }
+.section-title span { color:var(--gold); }
+.section-line { display:inline-block; width:40px; height:3px; background:var(--gold); border-radius:2px; margin-right:12px; vertical-align:middle; }
+
+.filter-panel {
+  background:var(--dark3); border:1px solid rgba(255,215,0,0.12);
+  border-radius:14px; padding:20px; margin-bottom:24px;
+}
+.filter-row { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; }
+.filter-group { display:flex; flex-direction:column; gap:6px; flex:1; min-width:140px; }
+.filter-group label { font-size:11px; font-weight:700; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+.filter-input, .filter-select {
+  padding:9px 14px; border-radius:8px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:var(--dark4); color:var(--text);
+  font-family:'Kanit',sans-serif; font-size:13px; font-weight:600;
+  outline:none; transition:border-color 0.2s; width:100%;
+}
+.filter-input:focus, .filter-select:focus { border-color:rgba(255,215,0,0.5); }
+.filter-select option { background:var(--dark3); }
+.price-range-row { display:flex; gap:8px; align-items:center; }
+.price-range-row input { flex:1; }
+.price-sep { color:var(--muted); font-size:16px; font-weight:700; flex-shrink:0; }
+.btn-reset-filter {
+  padding:9px 18px; border-radius:8px;
+  border:1px solid rgba(255,255,255,0.1); background:transparent;
+  color:var(--muted); font-family:'Kanit',sans-serif;
+  font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s;
+  white-space:nowrap; height:38px; align-self:flex-end;
+}
+.btn-reset-filter:hover { border-color:rgba(239,68,68,0.5); color:#ef4444; }
+
+.status-tabs { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.status-tab {
+  padding:7px 16px; border-radius:8px;
+  border:1px solid rgba(255,255,255,0.1);
+  background:var(--dark3); color:var(--muted);
+  font-family:'Kanit',sans-serif; font-size:13px; font-weight:600;
+  cursor:pointer; transition:all 0.2s;
+}
+.status-tab:hover { border-color:rgba(255,215,0,0.4); color:var(--gold); }
+.status-tab.active { border-color:rgba(255,215,0,0.5); color:var(--gold); background:rgba(255,215,0,0.08); }
+
+.result-meta { font-size:13px; color:var(--muted); margin-bottom:16px; }
+.result-meta strong { color:var(--gold); }
+
+.product-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:16px; }
+.product-card {
+  background:var(--dark3); border-radius:14px;
+  border:1px solid rgba(255,255,255,0.06);
+  overflow:hidden; cursor:pointer; transition:all 0.25s; position:relative;
+}
+.product-card:hover { transform:translateY(-4px); border-color:rgba(255,215,0,0.3); box-shadow:0 12px 32px rgba(0,0,0,0.4); }
+.card-img { width:100%; aspect-ratio:16/10; object-fit:cover; display:block; background:var(--dark4); position:relative; }
+.card-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.card-img-placeholder {
+  width:100%; aspect-ratio:16/10;
+  background:linear-gradient(135deg, var(--dark4), #1a1a30);
+  display:flex; align-items:center; justify-content:center;
+  font-size:40px; color:rgba(255,215,0,0.2);
+}
+.status-badge {
+  position:absolute; top:10px; left:10px;
+  padding:4px 10px; border-radius:6px; font-size:11px; font-weight:700;
+  display:flex; align-items:center; gap:5px;
+}
+.status-badge.available { background:rgba(34,197,94,0.9); color:white; }
+.status-badge.sold { background:rgba(239,68,68,0.9); color:white; }
+.status-badge .dot { width:6px; height:6px; border-radius:50%; background:white; animation:pulse-dot 1.5s infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.price-badge {
+  position:absolute; bottom:10px; right:10px;
+  background:rgba(0,0,0,0.8); border:1px solid rgba(255,215,0,0.4);
+  padding:4px 12px; border-radius:6px; color:var(--gold); font-size:14px; font-weight:900;
+}
+.card-body { padding:14px; }
+.card-game-tag {
+  display:inline-block; padding:3px 10px; border-radius:4px;
+  background:rgba(249,115,22,0.15); border:1px solid rgba(249,115,22,0.3);
+  color:var(--orange); font-size:10px; font-weight:700; letter-spacing:1px; margin-bottom:8px;
+}
+.card-title { font-size:14px; font-weight:700; color:white; margin-bottom:4px; line-height:1.4; }
+.card-id { font-size:12px; color:var(--muted); margin-bottom:10px; }
+.card-footer { display:flex; align-items:center; justify-content:space-between; }
+.card-price { font-size:18px; font-weight:900; color:var(--gold); }
+.card-date { font-size:11px; color:var(--muted); }
+.btn-detail {
+  width:100%; padding:10px; border-radius:8px; border:none;
+  background:var(--orange); color:white; font-family:'Kanit',sans-serif;
+  font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s;
+  margin-top:10px; display:flex; align-items:center; justify-content:center; gap:6px;
+}
+.btn-detail:hover { background:#ea6500; }
+
+.empty-state { text-align:center; padding:60px 20px; color:var(--muted); }
+.empty-state .icon { font-size:48px; margin-bottom:16px; }
+.empty-state h3 { font-size:18px; color:var(--text); margin-bottom:8px; }
+.loading { text-align:center; padding:60px 20px; color:var(--muted); }
+.spinner { width:36px; height:36px; border-radius:50%; border:3px solid var(--dark4); border-top-color:var(--gold); animation:spin 0.8s linear infinite; margin:0 auto 16px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.features-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin-bottom:48px; }
+.feature-card { background:var(--dark3); border-radius:12px; border:1px solid rgba(255,255,255,0.06); padding:20px; text-align:center; }
+.feature-icon { font-size:28px; margin-bottom:10px; }
+.feature-title { font-size:14px; font-weight:700; color:white; margin-bottom:4px; }
+.feature-desc { font-size:12px; color:var(--muted); }
+
+.pagination { display:flex; justify-content:center; gap:8px; margin-top:32px; }
+.page-btn {
+  width:36px; height:36px; border-radius:8px; border:1px solid rgba(255,255,255,0.1);
+  background:var(--dark3); color:var(--muted); font-family:'Kanit',sans-serif;
+  font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s;
+  display:flex; align-items:center; justify-content:center;
+}
+.page-btn:hover, .page-btn.active { border-color:rgba(255,215,0,0.5); color:var(--gold); background:rgba(255,215,0,0.08); }
+
+.toast {
+  position:fixed; bottom:24px; right:24px; z-index:999;
+  padding:14px 20px; border-radius:10px; font-size:14px; font-weight:600;
+  display:none; align-items:center; gap:10px; animation:slideUp 0.3s ease; max-width:320px;
+}
+.toast.show { display:flex; }
+.toast.success { background:#166534; border:1px solid #22c55e; color:#86efac; }
+.toast.error { background:#7f1d1d; border:1px solid #ef4444; color:#fca5a5; }
+@keyframes slideUp { from { transform:translateY(20px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+footer {
+  background:var(--dark2); border-top:1px solid rgba(255,215,0,0.1);
+  padding:24px 20px; text-align:center; color:var(--muted); font-size:13px; margin-top:60px;
+}
+footer span { color:var(--gold); }
+footer a { color:var(--muted); text-decoration:none; }
+footer a:hover { color:var(--gold); }
+
+.dropdown { position:relative; }
+.dropdown-menu {
+  position:absolute; top:calc(100% + 8px); right:0;
+  background:var(--dark3); border:1px solid rgba(255,215,0,0.2);
+  border-radius:10px; padding:8px; min-width:180px; display:none; z-index:200;
+}
+.dropdown-menu.open { display:block; }
+.dropdown-item {
+  display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:8px;
+  color:var(--text); font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s; text-decoration:none;
+}
+.dropdown-item:hover { background:rgba(255,255,255,0.05); }
+.dropdown-item.danger { color:#ef4444; }
+.dropdown-divider { height:1px; background:rgba(255,255,255,0.06); margin:6px 0; }
+
+@media(max-width:640px) {
+  .nav-links { display:none; }
+  .stats-bar { gap:30px; }
+  .filter-row { flex-direction:column; }
+  .filter-group { min-width:100%; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">
+    <div class="icon">🎮</div>
+    <div>หนุ่ม<span>กล้ามทอง</span></div>
+  </a>
+  <div class="nav-links">
+    <a href="index.html" class="active">🏠 หน้าแรก</a>
+    <a href="#shop">🛒 ร้านค้า</a>
+    <a href="contact.html">📬 ติดต่อ</a>
+  </div>
+  <div class="nav-auth" id="navAuth">
+    <a href="auth.html" class="btn-login">🔑 เข้าสู่ระบบ</a>
+    <a href="auth.html?mode=register" class="btn-register">➕ สมัครสมาชิก</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">⚡ ศูนย์รวมไอดีเกม</div>
+    <h1>
+      <span class="gold">หนุ่ม</span><span class="white">กล้ามทอง</span><br>
+      <span class="white" style="font-size:0.55em;font-weight:700;color:#aaa;">ขายไอดีเกม คุณภาพดี ราคาคุ้ม</span>
+    </h1>
+    <p>ไอดีทุกชิ้นตรวจสอบแล้ว 100% ปลอดภัย ส่งไวทันใจ มีปัญหาติดต่อแอดมินได้ตลอด 24 ชม.</p>
+    <div class="hero-btns">
+      <button class="btn-hero-primary" onclick="scrollToShop()">🛒 เลือกซื้อเลย</button>
+      <button class="btn-hero-secondary" onclick="openContactModal()">📬 ติดต่อเรา</button>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT MODAL -->
+<div class="modal-overlay" id="contactModal">
+  <div class="modal-box">
+    <h2>📬 ติดต่อเรา</h2>
+    <p>ทีมงานพร้อมให้บริการตลอด 24 ชั่วโมง</p>
+
+    <div class="contact-links">
+      <a href="https://line.me/ti/p/~YOUR_LINE_ID" target="_blank" class="contact-link line">
+        <span class="contact-link-icon">💬</span>
+        <div class="contact-link-info">
+          <div class="contact-link-label">Line</div>
+          <div class="contact-link-val">@YOUR_LINE_ID</div>
+        </div>
+        <span class="contact-link-arrow">→</span>
+      </a>
+
+      <a href="https://www.facebook.com/kunatip.jiso" target="_blank" class="contact-link fb">
+        <span class="contact-link-icon">📘</span>
+        <div class="contact-link-info">
+          <div class="contact-link-label">Facebook</div>
+          <div class="contact-link-val">kunatip.jiso</div>
+        </div>
+        <span class="contact-link-arrow">→</span>
+      </a>
+
+      <a href="https://www.tiktok.com/@YOUR_TIKTOK" target="_blank" class="contact-link tiktok">
+        <span class="contact-link-icon">🎵</span>
+        <div class="contact-link-info">
+          <div class="contact-link-label">TikTok</div>
+          <div class="contact-link-val">@YOUR_TIKTOK</div>
+        </div>
+        <span class="contact-link-arrow">→</span>
+      </a>
+    </div>
+
+    <div class="modal-btns">
+      <button class="btn-close-modal" onclick="closeContactModal()">✕ ปิด</button>
+    </div>
+  </div>
+</div>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat-item">
+    <div class="stat-num gold" id="statTotal">-</div>
+    <div class="stat-label">ไอดีทั้งหมด</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num green" id="statAvail">-</div>
+    <div class="stat-label">พร้อมขาย</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num red" id="statSold">-</div>
+    <div class="stat-label">ขายแล้ว</div>
+  </div>
+</div>
+
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item"><span class="dot"></span>สินค้าทุกไอดีตรวจสอบแล้ว 100% ปลอดภัยแน่นอน</span>
+    <span class="ticker-item"><span class="dot"></span>⚡ ส่งไอดีทันทีหลังชำระเงิน</span>
+    <span class="ticker-item"><span class="dot"></span>🎧 มีปัญหาติดต่อแอดมินได้ตลอด 24 ชม.</span>
+    <span class="ticker-item"><span class="dot"></span>🔥 มีสินค้าใหม่มาทุกวัน อัพเดทตลอดเวลา</span>
+    <span class="ticker-item"><span class="dot"></span>สินค้าทุกไอดีตรวจสอบแล้ว 100% ปลอดภัยแน่นอน</span>
+    <span class="ticker-item"><span class="dot"></span>⚡ ส่งไอดีทันทีหลังชำระเงิน</span>
+    <span class="ticker-item"><span class="dot"></span>🎧 มีปัญหาติดต่อแอดมินได้ตลอด 24 ชม.</span>
+    <span class="ticker-item"><span class="dot"></span>🔥 มีสินค้าใหม่มาทุกวัน อัพเดทตลอดเวลา</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="features-grid">
+    <div class="feature-card"><div class="feature-icon">✅</div><div class="feature-title">ตรวจสอบแล้ว 100%</div><div class="feature-desc">ทุกไอดีผ่านการตรวจสอบก่อนวางขาย</div></div>
+    <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-title">ส่งไวทันใจ</div><div class="feature-desc">ส่งไอดีทันทีหลังยืนยันการชำระเงิน</div></div>
+    <div class="feature-card"><div class="feature-icon">🔒</div><div class="feature-title">ปลอดภัย 100%</div><div class="feature-desc">ระบบซื้อขายมีความปลอดภัยสูงสุด</div></div>
+    <div class="feature-card"><div class="feature-icon">🎧</div><div class="feature-title">ซัพพอร์ต 24 ชม.</div><div class="feature-desc">ทีมงานพร้อมช่วยเหลือตลอดเวลา</div></div>
+  </div>
+</div>
+
+<div class="section" id="shop">
+  <div class="section-header">
+    <div class="section-title"><span class="section-line"></span>ไอดีเกม<span> แนะนำ</span></div>
+  </div>
+
+  <div class="filter-panel">
+    <div class="filter-row">
+      <div class="filter-group filter-search-box" style="flex:2;min-width:200px;">
+        <label>🔍 ค้นหา</label>
+        <div style="position:relative;">
+          <span class="search-icon" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);">🔍</span>
+          <input class="filter-input" type="text" id="searchInput" placeholder="ชื่อ, รหัส, ราคา..." oninput="applyFilters()" style="padding-left:36px;">
+        </div>
+      </div>
+      <div class="filter-group" style="flex:2;min-width:200px;">
+        <label>💰 ช่วงราคา (บาท)</label>
+        <div class="price-range-row">
+          <input class="filter-input" type="number" id="priceMin" placeholder="ต่ำสุด" oninput="applyFilters()" min="0">
+          <span class="price-sep">–</span>
+          <input class="filter-input" type="number" id="priceMax" placeholder="สูงสุด" oninput="applyFilters()" min="0">
+        </div>
+      </div>
+      <div class="filter-group" style="min-width:160px;">
+        <label>↕️ เรียงตาม</label>
+        <select class="filter-select" id="sortSelect" onchange="applyFilters()">
+          <option value="newest">ล่าสุด</option>
+          <option value="oldest">เก่าสุด</option>
+          <option value="price_asc">ราคา: ต่ำ → สูง</option>
+          <option value="price_desc">ราคา: สูง → ต่ำ</option>
+        </select>
+      </div>
+      <button class="btn-reset-filter" onclick="resetFilters()">🔄 รีเซ็ต</button>
+    </div>
+  </div>
+
+  <div class="status-tabs">
+    <button class="status-tab active" onclick="setStatus('all',this)">🎮 ทั้งหมด</button>
+    <button class="status-tab" onclick="setStatus('available',this)">✅ พร้อมขาย</button>
+    <button class="status-tab" onclick="setStatus('sold',this)">❌ ขายแล้ว</button>
+  </div>
+
+  <div class="result-meta" id="resultMeta"></div>
+  <div id="productGrid" class="product-grid">
+    <div class="loading"><div class="spinner"></div>กำลังโหลดสินค้า...</div>
+  </div>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+  <p>© 2026 <span>หนุ่มกล้ามทอง</span> | ขายไอดีเกม คุณภาพดี ราคาสุดคุ้ม</p>
+  <p style="margin-top:6px">
+    📱 ติดต่อ:
+    <a href="https://www.facebook.com/kunatip.jiso" target="_blank">Facebook</a> ·
+    <a href="contact.html">Line</a> ·
+    <a href="contact.html">TikTok</a>
+  </p>
+</footer>
+
+<script>
+const API = "http://localhost:3000";
+let allProducts = [];
+let currentStatus = "all";
+let currentPage = 1;
+const PER_PAGE = 12;
+
+async function init() {
+  checkAuth();
+  await loadStats();
+  await loadProducts();
+}
+
+function checkAuth() {
+  const token = localStorage.getItem("token");
+  const username = localStorage.getItem("username");
+  if (token && username) {
+    const initials = username.slice(0,2).toUpperCase();
+    document.getElementById("navAuth").innerHTML = `
+      <div class="dropdown">
+        <button class="user-btn" onclick="toggleDropdown()">
+          <div class="user-avatar">${initials}</div>${username}<span>▾</span>
+        </button>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <div class="dropdown-item" onclick="location.href='profile.html'">👤 โปรไฟล์</div>
+          <div class="dropdown-item" onclick="location.href='history.html'">📋 ประวัติการซื้อ</div>
+          <div class="dropdown-divider"></div>
+          <div class="dropdown-item danger" onclick="logout()">🚪 ออกจากระบบ</div>
+        </div>
+      </div>`;
+  }
+}
+
+function toggleDropdown() { document.getElementById("dropdownMenu")?.classList.toggle("open"); }
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".dropdown")) document.querySelectorAll(".dropdown-menu").forEach(m => m.classList.remove("open"));
+});
+function logout() { localStorage.clear(); location.reload(); }
+
+async function loadStats() {
+  try {
+    const res = await fetch(API + "/accounts");
+    const data = await res.json();
+    const total = data.length;
+    const avail = data.filter(d => d.status !== "sold").length;
+    document.getElementById("statTotal").textContent = total;
+    document.getElementById("statAvail").textContent = avail;
+    document.getElementById("statSold").textContent = total - avail;
+  } catch {}
+}
+
+async function loadProducts() {
+  try {
+    const res = await fetch(API + "/accounts");
+    allProducts = await res.json();
+    applyFilters();
+  } catch {
+    document.getElementById("productGrid").innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="icon">❌</div><h3>เชื่อมต่อไม่ได้</h3><p>ไม่สามารถโหลดสินค้าได้ กรุณาลองใหม่</p>
+      </div>`;
+  }
+}
+
+/* ===== CONTACT MODAL ===== */
+function openContactModal() {
+  document.getElementById("contactModal").classList.add("open");
+}
+function closeContactModal() {
+  document.getElementById("contactModal").classList.remove("open");
+}
+document.getElementById("contactModal").addEventListener("click", function(e) {
+  if (e.target === this) closeContactModal();
+});
+/* ===== END CONTACT MODAL ===== */
+
+function setStatus(s, btn) {
+  currentStatus = s;
+  currentPage = 1;
+  document.querySelectorAll(".status-tab").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  applyFilters();
+}
+
+function resetFilters() {
+  document.getElementById("searchInput").value = "";
+  document.getElementById("priceMin").value = "";
+  document.getElementById("priceMax").value = "";
+  document.getElementById("sortSelect").value = "newest";
+  currentStatus = "all";
+  currentPage = 1;
+  document.querySelectorAll(".status-tab").forEach((b,i) => b.classList.toggle("active", i===0));
+  applyFilters();
+}
+
+function applyFilters() {
+  currentPage = 1;
+  const q = document.getElementById("searchInput").value.toLowerCase().trim();
+  const minP = parseFloat(document.getElementById("priceMin").value) || 0;
+  const maxP = parseFloat(document.getElementById("priceMax").value) || Infinity;
+  const sort = document.getElementById("sortSelect").value;
+
+  let filtered = allProducts.filter(p => {
+    const matchStatus = currentStatus === "all" ||
+      (currentStatus === "available" && p.status !== "sold") ||
+      (currentStatus === "sold" && p.status === "sold");
+    const price = Number(p.price) || 0;
+    const matchPrice = price >= minP && price <= maxP;
+    const matchSearch = !q || (p.detail||"").toLowerCase().includes(q) || String(p.price).includes(q) || (p._id||"").toLowerCase().includes(q);
+    return matchStatus && matchPrice && matchSearch;
+  });
+
+  filtered.sort((a,b) => {
+    if (sort === "price_asc") return (Number(a.price)||0) - (Number(b.price)||0);
+    if (sort === "price_desc") return (Number(b.price)||0) - (Number(a.price)||0);
+    if (sort === "oldest") return new Date(a.createdAt||0) - new Date(b.createdAt||0);
+    return new Date(b.createdAt||0) - new Date(a.createdAt||0);
+  });
+
+  renderGrid(filtered);
+}
+
+function renderGrid(filtered) {
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / PER_PAGE);
+  const start = (currentPage - 1) * PER_PAGE;
+  const page = filtered.slice(start, start + PER_PAGE);
+
+  document.getElementById("resultMeta").innerHTML = `แสดง <strong>${Math.min(start+1, total)}–${Math.min(start+PER_PAGE, total)}</strong> จากทั้งหมด <strong>${total}</strong> รายการ`;
+
+  const grid = document.getElementById("productGrid");
+  if (!page.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="icon">🔍</div><h3>ไม่พบสินค้า</h3><p>ลองเปลี่ยนคำค้นหาหรือตัวกรอง</p></div>`;
+    document.getElementById("pagination").innerHTML = "";
+    return;
+  }
+
+  grid.innerHTML = page.map(p => {
+    const isSold = p.status === "sold";
+    const dateStr = p.createdAt ? new Date(p.createdAt).toLocaleDateString("th-TH") : "28/04/2569";
+    const imgHtml = p.image
+      ? `<img src="${API}${p.image}" alt="${p.detail}" onerror="this.parentElement.innerHTML='<div class=card-img-placeholder>🎮</div>'">`
+      : `<div class="card-img-placeholder">🎮</div>`;
+    return `<div class="product-card" onclick="viewProduct('${p._id}')">
+      <div class="card-img" style="position:relative;overflow:hidden">
+        ${imgHtml}
+        <div class="status-badge ${isSold?'sold':'available'}">
+          ${isSold?'':'<span class="dot"></span>'}${isSold?'❌ ขายแล้ว':'พร้อมขาย'}
+        </div>
+        <div class="price-badge">฿${Number(p.price).toLocaleString()}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-game-tag">FREEFIRE</div>
+        <div class="card-title">${p.detail||'ไอดีเกม'}</div>
+        <div class="card-id">🔖 รหัส: ${(p._id||'').slice(-5)||'XXXXX'}</div>
+        <div class="card-footer">
+          <div class="card-price">฿${Number(p.price).toLocaleString()}</div>
+          <div class="card-date">🕐 ${dateStr}</div>
+        </div>
+        <button class="btn-detail" onclick="event.stopPropagation();viewProduct('${p._id}')">🔍 ดูรายละเอียด</button>
+      </div>
+    </div>`;
+  }).join("");
+
+  const pag = document.getElementById("pagination");
+  if (totalPages <= 1) { pag.innerHTML = ""; return; }
+  let html = "";
+  for (let i = 1; i <= totalPages; i++) {
+    html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="gotoPage(${i})">${i}</button>`;
+  }
+  pag.innerHTML = html;
+  window._lastFiltered = filtered;
+}
+
+function gotoPage(n) {
+  currentPage = n;
+  renderGrid(window._lastFiltered || []);
+  document.getElementById("shop").scrollIntoView({ behavior:"smooth" });
+}
+
+function viewProduct(id) {
+  localStorage.setItem("view_id", id);
+  location.href = "detail.html";
+}
+function scrollToShop() { document.getElementById("shop").scrollIntoView({ behavior:"smooth" }); }
+function showToast(msg, type="success") {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+init();
+</script>
+</body>
+</html>
