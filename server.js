@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
@@ -10,12 +11,12 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
 const app = express();
-const SECRET = "nungklamtong_secret_2026";
-const MONGO_URI = "mongodb://127.0.0.1:27017/websell";
+const SECRET = process.env.SECRET;
+const MONGO_URI = process.env.MONGO_URI;
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
-  auth: { user: "thazxs.4@gmail.com", pass: "hzjivdmveipce gqv".replace(/ /g, "") }
+  auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS }
 });
 
 app.use(cors());
@@ -318,7 +319,7 @@ app.put("/admin/order/:id", authMiddleware, adminMiddleware, async (req, res) =>
 app.post("/make-admin", async (req, res) => {
   try {
     const { username, secret } = req.body;
-    if (secret !== "nungklamtong2026") return res.status(403).json({ message: "secret ไม่ถูก" });
+    if (secret !== process.env.ADMIN_SECRET) return res.status(403).json({ message: "secret ไม่ถูก" });
     const user = await User.findOneAndUpdate({ username }, { role: "admin" }, { new: true });
     if (!user) return res.status(404).json({ message: "ไม่พบผู้ใช้" });
     res.json({ message: `${username} เป็น admin แล้ว` });
@@ -476,7 +477,7 @@ app.delete("/admin/lucky/:id", authMiddleware, adminMiddleware, async (req, res)
 });
 
 // ===== START =====
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("🚀 Server รันที่ http://localhost:3000");
   console.log("📁 เปิดเว็บได้ที่ http://localhost:3000/index.html");
 });
